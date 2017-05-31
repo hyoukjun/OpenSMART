@@ -1,0 +1,91 @@
+#!/bin/bash
+
+BUILDDIR=./build
+CXXFLAGS="-Wall -Wno-unused -O0 -g -D_FILE_OFFSET_BITS=64 -j 8"
+INCLUDE="lib:src/types:testbenches"
+
+function clean {
+	rm -rf $BUILDDIR
+    rm -rf Verilog
+	rm -rf *.v
+	rm -rf ./bdir
+	rm -rf ./build
+	rm -f ./sim.so
+	rm -f ./sim
+}	
+
+function compile {
+	mkdir -p $BUILDDIR
+	bsc -u -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDES ./testbenches/TestBench.bsv
+	bsc -u -sim -e mkTestBench +RTS -K1024M -RTS -bdir $BUILDDIR -info-dir $BUILDDIR -simdir $BUILDDIR -warn-scheduler-effort -parallel-sim-link 8 -Xc++ -O0 -o sim 
+	mv sim $BUILDDIR
+	mv sim.so $BUILDDIR
+}
+
+function compile_arg {
+	mkdir -p $BUILDDIR
+	bsc -u -D $1 -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDES ./testbenches/TestBench.bsv
+	bsc -u -D $1 -sim -e mkTestBench +RTS -K1024M -RTS -bdir $BUILDDIR -info-dir $BUILDDIR -simdir $BUILDDIR -warn-scheduler-effort -parallel-sim-link 8 -Xc++ -O0 -o sim 
+	mv sim $BUILDDIR
+	mv sim.so $BUILDDIR
+}
+
+function verilog {
+	mkdir -p $BUILDDIR
+	mkdir -p $BUILDDIR/bdir
+			bsc -verilog -g mkTestBench -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/TestBench.bsv
+			mkdir -p Verilog
+			mv *.v ./Verilog/
+			mv Types/*.v ./Verilog/
+		}
+
+		function verilog_arg {
+	mkdir -p $BUILDDIR
+	mkdir -p $BUILDDIR/bdir
+	bsc -verilog -g mkTestBench -D $1 -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/TestBench.bsv
+    mkdir -p Verilog
+    mv *.v ./Verilog/
+    mv Types/*.v ./Verilog/
+}
+
+function routerVerilog {
+	mkdir -p $BUILDDIR
+	mkdir -p $BUILDDIR/bdir
+	bsc -verilog -g mkBaselineRouter -aggressive-conditions -no-warn-action-shadowing +RTS -K16388608 -RTS -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/BaselineRouter.bsv
+    mkdir -p Verilog
+    mv *.v ./Verilog/
+    mv Types/*.v ./Verilog/
+}
+
+function run_test {
+	./$BUILDDIR/bdir/sim
+}
+
+echo "OpenSMART ver 1.0"
+
+case "$1" in
+	-v) case "$2" in
+          "") echo "No definitions. Compile baseline";
+              verilog;;
+          *)  echo "defined $2";
+              verilog_arg $2;;
+        esac;;
+	-R) routerVerilog;;
+	-c) clean;
+		case "$2" in
+			"") echo "No definitions. Compile baseline";
+			compile;;
+			*) echo "Defined $2";
+			compile_arg $2;;
+		esac;;
+	-clean) clean;;
+	-r) run_test;;
+	-h|--help|*)  echo " ";
+			echo "Usage : $0 (flag) (routing)";
+			echo "flag list: [-c : compile all] [-clean : cleanup build files] [ -r : run test ] [ -v : generate Verilog] ";
+			echo "If you want to compile a Mesh simulation, use this command: "./OpenSMART -c"";
+			echo "If you want to compile a SMART simulation, use this command: "./OpenSMART -c SMART"";
+			echo "If you want to generate the Verilog code of a mesh network, use this command: "./OpenSMART -v"";
+			echo "If you want to generate the Verilog code of a SMART network, use this command: "./OpenSMART -v SMART"";
+			echo " ";;
+esac

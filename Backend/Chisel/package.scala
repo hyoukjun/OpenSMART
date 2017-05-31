@@ -1,0 +1,1 @@
+package object SMART extends SMART.constants.SMARTConstants
