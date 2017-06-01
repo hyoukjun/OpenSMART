@@ -1,0 +1,27 @@
+OpenSMART 1.0 Bluespec System Verilog Version
+
+If you have installed Bluespec System Verilog compiler, you can run compiliation script, "OpenSMART", in this directory.
+You can either compile a simulation that evaluates the network using synthetic traffic patterns (uniform random and bit complement)
+or generate Verilog code. The usage of the compilation script is as the following:
+
+Usage
+./OpenSMART (flag) (SMART)
+  Available flags
+  -c : compile a simulation
+  -r : run the simulation
+  -v : generate Verilog code
+  -clean: clean up compiled files
+
+Examples
+./OpenSMART -c : compile a mesh network simulation
+./OpenSMART -c SMART : compile a SMART network simulation
+./OpenSMART -v : generate Verilog code of a mesh network
+./OpenSMART -v SMART : generate Verilog code of a SMART network
+
+How to config a network?
+./src/Types/Types.bsv defines the dimension of network (MeshWidth, MeshHeight), number of VCs (NumUserVCs),
+InjectionRate of the synthetic traffic simulation, Routing algorithm (currentRoutingAlgorithm), and so on.
+
+To implement a network with an arbitrary topology, you need to modify Network.bsv in the 1.0 version.
+However, we will provide a DOT file to topology setting converter in a later version.
+
