@@ -2,7 +2,7 @@
 
 BUILDDIR=./build
 CXXFLAGS="-Wall -Wno-unused -O0 -g -D_FILE_OFFSET_BITS=64 -j 8"
-INCLUDE="lib:src/types:testbenches"
+INCLUDE="lib:src:src/Types:testbenches"
 
 function clean {
 	rm -rf $BUILDDIR
@@ -16,7 +16,7 @@ function clean {
 
 function compile {
 	mkdir -p $BUILDDIR
-	bsc -u -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDES ./testbenches/TestBench.bsv
+	bsc -u -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDE ./testbenches/TestBench.bsv
 	bsc -u -sim -e mkTestBench +RTS -K1024M -RTS -bdir $BUILDDIR -info-dir $BUILDDIR -simdir $BUILDDIR -warn-scheduler-effort -parallel-sim-link 8 -Xc++ -O0 -o sim 
 	mv sim $BUILDDIR
 	mv sim.so $BUILDDIR
@@ -24,7 +24,7 @@ function compile {
 
 function compile_arg {
 	mkdir -p $BUILDDIR
-	bsc -u -D $1 -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDES ./testbenches/TestBench.bsv
+	bsc -u -D $1 -sim +RTS -K1024M -RTS -aggressive-conditions -no-warn-action-shadowing -parallel-sim-link 8 -warn-scheduler-effort -simdir $BUILDDIR -info-dir $BUILDDIR -bdir $BUILDDIR -p +:$INCLUDE ./testbenches/TestBench.bsv
 	bsc -u -D $1 -sim -e mkTestBench +RTS -K1024M -RTS -bdir $BUILDDIR -info-dir $BUILDDIR -simdir $BUILDDIR -warn-scheduler-effort -parallel-sim-link 8 -Xc++ -O0 -o sim 
 	mv sim $BUILDDIR
 	mv sim.so $BUILDDIR
