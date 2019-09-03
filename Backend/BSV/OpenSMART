@@ -31,30 +31,32 @@ function compile_arg {
 }
 
 function verilog {
-	mkdir -p $BUILDDIR
-	mkdir -p $BUILDDIR/bdir
-			bsc -verilog -g mkTestBench -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/TestBench.bsv
-			mkdir -p Verilog
-			mv *.v ./Verilog/
-			mv Types/*.v ./Verilog/
-		}
+    mkdir -p $BUILDDIR
+    mkdir -p $BUILDDIR/bdir
+    bsc -verilog -g mkNetwork -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:$INCLUDES -u ./src/Network.bsv
+    mkdir -p Verilog
+	mv *.v ./Verilog/
+    mv ./src/*.v ./Verilog/
+	mv ./src/Types/*.v ./Verilog/
+}
 
 		function verilog_arg {
 	mkdir -p $BUILDDIR
 	mkdir -p $BUILDDIR/bdir
-	bsc -verilog -g mkTestBench -D $1 -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/TestBench.bsv
+	bsc -verilog -g mkNetwork -D $1 -aggressive-conditions -no-warn-action-shadowing -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:$INCLUDES -u ./src/Network.bsv
     mkdir -p Verilog
     mv *.v ./Verilog/
-    mv Types/*.v ./Verilog/
+    mv ./src/*.v ./Verilog/
+    mv ./src/Types/*.v ./Verilog/
 }
 
 function routerVerilog {
 	mkdir -p $BUILDDIR
 	mkdir -p $BUILDDIR/bdir
-	bsc -verilog -g mkBaselineRouter -aggressive-conditions -no-warn-action-shadowing +RTS -K16388608 -RTS -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:Types -u ./testbenches/BaselineRouter.bsv
+	bsc -verilog -g mkBaselineRouter -aggressive-conditions -no-warn-action-shadowing +RTS -K16388608 -RTS -simdir $BUILDDIR/bdir -info-dir $BUILDDIR/bdir -bdir $BUILDDIR/bdir -p +:$INCLUDES -u ./testbenches/BaselineRouter.bsv
     mkdir -p Verilog
     mv *.v ./Verilog/
-    mv Types/*.v ./Verilog/
+    mv ./src/Types/*.v ./Verilog/
 }
 
 function run_test {
