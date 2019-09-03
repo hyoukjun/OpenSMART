@@ -2,7 +2,7 @@
 
 BUILDDIR=./build
 CXXFLAGS="-Wall -Wno-unused -O0 -g -D_FILE_OFFSET_BITS=64 -j 8"
-INCLUDE="lib:src/types:testbenches"
+INCLUDES="./lib:./src:./src/Types:./testbenches"
 
 function clean {
 	rm -rf $BUILDDIR
@@ -58,7 +58,7 @@ function routerVerilog {
 }
 
 function run_test {
-	./$BUILDDIR/bdir/sim
+	./$BUILDDIR/sim
 }
 
 echo "OpenSMART ver 1.0"

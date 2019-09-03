@@ -10,11 +10,11 @@ typedef 1       NumFlitsPerControlMessage;
 
 typedef 6       UserHPCMax;
 
-typedef 2       MeshWidth;
-typedef 2       MeshHeight;
-typedef 1       NumUserVCs;
+typedef 4       MeshWidth;
+typedef 4       MeshHeight;
+typedef 2       NumUserVCs;
 
-typedef 2     InjectionRate; //Injection Rate: 0.XX
+typedef 10     InjectionRate; //Injection Rate: 0.XX
 
 typedef 4      NumTrafficGeneratorBufferSlots;
 
